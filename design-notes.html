@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>设计说明 · 每日 15 分钟语文学习</title>
+  <link rel="stylesheet" href="review.css">
+</head>
+<body>
+  <div class="wrap">
+    <p class="links"><a href="index.html">返回效果图评审</a> · <a href="design-notes.md">design-notes.md 原文</a></p>
+    <div class="banner" role="note">
+      <strong>这是效果图评审版,所有数字为示例数据</strong>
+      <p>下面是设计说明原文的网页版，方便在手机上阅读。原文里「尚未向仓库写入内容」指的是写说明时的状态；现在评审页已经放上来了，学习功能仍然还没开始做。</p>
+    </div>
+    <article class="article">
+<h1>「每日 15 分钟」语文学习 Web/PWA · 全套设计说明(design-notes)</h1>
+<blockquote>
+<p>面向:<strong>五年级</strong>孩子 · 简体中文 · 每天 15 分钟 · 进度可视化 + 成就徽章 · 与「错题本」打通<br />
+竖版画布 390×844、横版画布 844×390,PNG 均为 2x(竖 780×1688,横 1688×780)。<br />
+沿用「古诗词 v1」视觉风格(暖奶油底、橙色主色、厚度阴影卡片、吉祥物、霞鹜文楷),生成流程相同(Python 拼 HTML → Playwright 截图)。<br />
+<strong>所有数字(连续天数、进度、徽章数、得分、日期)均为「示例数据」,仅为设计示意,各屏之间未做严格对账。</strong></p>
+</blockquote>
+<h2>0. 部署与实现方案</h2>
+<ul>
+<li><strong>不做原生 App</strong>:只做 Web / PWA。"iPhone 竖屏 / 横屏"仅是画布尺寸参照。</li>
+<li><strong>托管</strong>:GitHub Pages 静态托管(纯前端、无后端;进度与错题本存浏览器 IndexedDB/localStorage)。</li>
+<li><strong>仓库与访问链接</strong>(用户已确认):仓库 <code>fymdchenwei/yuwen</code>(公开)→ <code><a href="https://fymdchenwei.github.io/yuwen/">https://fymdchenwei.github.io/yuwen/</a></code>。</li>
+<li>项目站点会部署在子路径 <code>/yuwen/</code> 下,因此代码里所有资源路径、<code>manifest</code> 的 <code>start_url</code>/<code>scope</code>、Service Worker 的 <code>scope</code> 都要用相对路径或 <code>/yuwen/</code> 前缀。</li>
+<li><strong>当前状态:未向该仓库写入任何内容,开发待用户审完本效果图后启动。</strong></li>
+<li><strong>添加到桌面</strong>(界面见 H4):<code>manifest.webmanifest</code>(名称、192/512 图标、<code>display: standalone</code>、主题色、<code>orientation: any</code>)+ iOS 额外加 <code>apple-touch-icon</code> 与 <code>apple-mobile-web-app-capable</code>;iOS Safari「分享 → 添加到主屏幕」,安卓 Chrome「安装应用 / 添加到主屏幕」。</li>
+<li><strong>离线支持</strong>:Service Worker 预缓存 App Shell(HTML/CSS/JS)、字体子集、各类题库 JSON;首次联网打开后无网络也能练习与记录进度;新版本后台静默更新、下次打开生效。</li>
+<li><strong>数据保存与备份</strong>:进度只在本设备;换机/清浏览器数据会丢失 → 「我的」提供 JSON 导出/导入备份(H4 有提示)。iOS 对长期不用的站点可能清理存储,需提示"添加到主屏幕后更稳"。</li>
+<li><strong>横竖屏适配</strong>:响应式(CSS Grid + <code>clamp()</code> 字号 + <code>@media (orientation: landscape)</code>)。竖屏底部 Tab;横屏改为<strong>左侧窄导航栏</strong>(66px),内容区左右分栏(左:题干/路径,右:选项/操作)。iPad 同理。</li>
+<li><strong>听写读音</strong>:使用浏览器 Web Speech API(<code>speechSynthesis</code>,<code>lang=zh-CN</code>)读词,<strong>读音来自系统语音</strong>,离线可用性取决于设备是否装了中文语音(iOS/安卓一般自带)。需在实现时实测;无中文语音时降级为"显示拼音 + 家长朗读"。</li>
+<li><strong>提醒</strong>:网页/PWA 无法可靠地在后台推送(尤其 iOS),所以"隔天重考"提醒以<strong>首页顶部提醒条</strong>为主(D3 已画);可选下载 <code>.ics</code> 日历提醒。不承诺系统推送。</li>
+<li><strong>字体</strong>:界面 Noto Sans CJK SC(iOS 回退 PingFang SC);正文楷体感用开源「霞鹜文楷 LXGW WenKai」(OFL)。效果图 <code>fonts/wenkai-subset.ttf</code> 由完整字体(v1.510)按<strong>本套图实际用字</strong>裁剪(<code>src/subset.py</code>),上线时同样子集化并随 Service Worker 缓存。</li>
+</ul>
+<h2>1. 设计思路</h2>
+<ol>
+<li><strong>15 分钟一条线</strong>:首页只回答"今天做什么":错题重考 → 古诗词 → 阅读理解 → 快问快答,每段有时间;其余类别可随点随练。</li>
+<li><strong>五类练习共用一个外壳</strong>:同样的顶部进度条、底部反馈条、星星、徽章、错题本——换玩法,不换壳。</li>
+<li><strong>错误不惩罚</strong>:答错用粉色 + 鼓励语,并<strong>自动进错题本</strong>,按 明天 → 3 天后 → 7 天后 复习;连续 3 次答对"毕业"。</li>
+<li><strong>理解优于猜</strong>:阅读理解必须划出依据句才给分;成语接词后还要选/说出意思。</li>
+<li><strong>进度可见</strong>:今日计划步骤条、连续打卡周历、五类进度条、徽章墙。</li>
+</ol>
+<h2>2. 信息架构</h2>
+<pre><code>底部 Tab(竖屏)/ 左侧导航(横屏):首页 · 闯关 · 错题本 · 我的
+首页
+ ├─ 今日 15 分钟计划(4 步)+ 连续打卡
+ ├─ 五类练习入口
+ │   ├─ 古诗词 ─ 练习项(6类,v1 先做逐句填空)─ 年级(一~五)─ 册 ─ 诗 ─ 关卡路径 ─ 作答/反馈 ─ 通关徽章
+ │   ├─ 生字词听写 ─ 选词表/今日词 ─ 听写作答 ─ 自核 ─ 结果 + 错词入错题本 + 隔天重考提醒
+ │   ├─ 阅读理解找证据 ─ 选短文 ─ 划句作答 ─ 得分/反馈(标准依据句)
+ │   ├─ 成语与近义词 ─ 接龙 + 释义(近义词为同页签)─ 释义反馈
+ │   └─ 文学常识速问 ─ 5 题一组 ─ 答题 ─ 结果
+ └─ 表达习作素材积累(即将上线 · 占位)
+错题本(五类共用)│ 我的:总进度 / 徽章总览 / 添加到主屏幕 / 备份
+</code></pre>
+<h2>3. 五类练习项:能力与题型属性</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>练习项(v1 设计)</th>
+<th>考察能力</th>
+<th>题型属性</th>
+<th>界面</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>古诗词</td>
+<td>逐句填空(闯关);后续:接下句、排序、诗题作者连线、字词释义、听读跟背</td>
+<td>字词识记、默写、形近/同音辨析;后续含理解</td>
+<td>纯记忆(后续有 记忆+理解)</td>
+<td>P00~P10</td>
+</tr>
+<tr>
+<td>生字词听写</td>
+<td>听读音 → 纸上手写 → 自核</td>
+<td>字音字形、书写准确</td>
+<td>纯记忆 + 自评</td>
+<td>D1~D3</td>
+</tr>
+<tr>
+<td>阅读理解找证据</td>
+<td>选答案 + 在原文划依据句</td>
+<td>信息提取、找依据、概括</td>
+<td>理解运用</td>
+<td>R1~R2</td>
+</tr>
+<tr>
+<td>成语与近义词</td>
+<td>成语接龙 + 选/说出意思;近义词辨析</td>
+<td>词语积累、词义理解、语境运用</td>
+<td>记忆 + 理解</td>
+<td>I1~I2</td>
+</tr>
+<tr>
+<td>文学常识速问</td>
+<td>5 题快问快答(选择)</td>
+<td>文学常识识记(作者、作品、称号)</td>
+<td>纯记忆</td>
+<td>L1~L2</td>
+</tr>
+<tr>
+<td>表达习作素材积累</td>
+<td>——</td>
+<td>素材积累</td>
+<td>——</td>
+<td>仅占位「即将上线」</td>
+</tr>
+</tbody>
+</table></div>
+<p>练习项划分为我的设计假设,非教材规定;可按家长意见增删。</p>
+<h2>4. 每日 15 分钟流程(示例配比)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>内容</th>
+<th>时长</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>①</td>
+<td>错题重考</td>
+<td>3 分</td>
+<td>取错题本中"今天到期"的题(五类混合),没有到期题则跳过并顺延时间</td>
+</tr>
+<tr>
+<td>②</td>
+<td>古诗词</td>
+<td>5 分</td>
+<td>接着上次关卡(如《示儿》第 2 关),约 3 关</td>
+</tr>
+<tr>
+<td>③</td>
+<td>阅读理解</td>
+<td>5 分</td>
+<td>1~2 题,一篇短文</td>
+</tr>
+<tr>
+<td>④</td>
+<td>快问快答</td>
+<td>2 分</td>
+<td>5 题</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>听写、成语接龙不固定在 15 分钟里,按星期轮换(如 周一/三/五 听写,周二/四 成语),或孩子自选加餐;首页卡片标"今日主练 / 重考 N 词 / 今日加餐"。</li>
+<li>完成 15 分钟计划算"打卡 1 天";连续天数驱动徽章(如"连续 7 天")。</li>
+<li>计划时长、轮换方式为<strong>示意</strong>,可由家长调整。</li>
+</ul>
+<h2>5. 界面清单</h2>
+<h3>5.1 竖版 <code>png/portrait/</code>(390×844)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>文件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>H1-新版首页</td>
+<td>问候 + 连续打卡;今日 15 分钟计划(4 步步骤条 + 继续按钮);五类入口;「表达习作素材积累」虚线占位(即将上线)</td>
+</tr>
+<tr>
+<td>H2-错题本</td>
+<td>今天要复习/待复习/已毕业;按类别筛选;五类错题混排;复习间隔说明</td>
+</tr>
+<tr>
+<td>H3-总进度与徽章总览</td>
+<td>连续打卡周历;五类练习进度条;徽章(已得/未得);错题本入口</td>
+</tr>
+<tr>
+<td>H4-添加到主屏幕引导</td>
+<td>iOS Safari 三步;安卓页签;访问链接 <code><a href="https://fymdchenwei.github.io/yuwen/">https://fymdchenwei.github.io/yuwen/</a></code>;离线说明;数据仅存本机提醒</td>
+</tr>
+<tr>
+<td>P00~P10</td>
+<td>古诗词 v1 全部 11 屏(沿用;P01 改为古诗词二级入口,P10 底部 Tab 高亮改为"我的";Tab 文案改为 首页/闯关/错题本/我的)</td>
+</tr>
+<tr>
+<td>D1-听写作答页</td>
+<td>大喇叭播放(系统读音)、再听/慢速听、田字格示意"写在本子上"(不在屏幕上写)、「我写好了」</td>
+</tr>
+<tr>
+<td>D2-自核页</td>
+<td>逐词显示答案+拼音,✓/✗ 自评,✗ 可标错字;统计;完成后错词进错题本</td>
+</tr>
+<tr>
+<td>D3-错题隔天重考提醒页</td>
+<td>得分环、错词自动入错题本、复习时间线(隔天/3 天/7 天)、明天首页提醒条预览、下载日历提醒</td>
+</tr>
+<tr>
+<td>R1-划句作答页</td>
+<td>标"示例文本·原创"的短文,句子编号,点句划线(已划第 1、4 句);题目+选项;未划依据句不能得分提示</td>
+</tr>
+<tr>
+<td>R2-得分反馈页</td>
+<td>得分环 2/3;原文逐句标出"标准依据句(第 4 句)· 你划到了"与"多划了(第 1 句)";得分明细;为什么是第 4 句;进错题本</td>
+</tr>
+<tr>
+<td>I1-接龙作答页</td>
+<td>已接成语及释义;"意→发"接词三选一;再选/说出意思(口述由家长点对/不对)</td>
+</tr>
+<tr>
+<td>I2-释义反馈页</td>
+<td>接词对/意思差一点;指出误选原因;正确释义、原创例句、近义成语;进错题本</td>
+</tr>
+<tr>
+<td>L1-答题页</td>
+<td>5 题进度点、倒计时(示意)、题干、四选项、可跳过</td>
+</tr>
+<tr>
+<td>L2-结果页</td>
+<td>4/5 得分环;逐题回顾;错题知识小卡;进错题本;再来一组</td>
+</tr>
+</tbody>
+</table></div>
+<h3>5.2 横版 <code>png/landscape/</code>(844×390)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>文件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LS1-首页</td>
+<td>左导航;左:问候+今日计划;右:五类入口(2 列)+ 习作占位</td>
+</tr>
+<tr>
+<td>LS2-古诗词填空作答页</td>
+<td>左:诗句卡(当前句居中);右:吉祥物提示、6 个候选字、检查</td>
+</tr>
+<tr>
+<td>LS3-闯关路径页</td>
+<td>路径改为横向"之"字;右侧进度+徽章预览+开始按钮</td>
+</tr>
+<tr>
+<td>LS4-阅读理解划句页</td>
+<td>左:短文(句子可划);右:题目、选项、提示、提交</td>
+</tr>
+<tr>
+<td>LS5-进度与徽章页</td>
+<td>三栏:打卡+错题本 / 五类进度 / 徽章</td>
+</tr>
+</tbody>
+</table></div>
+<h3>5.3 总览</h3>
+<ul>
+<li><code>overview-portrait.png</code>:竖版 24 屏,按类别分行(通用 / 古诗词 / 听写 / 阅读 / 成语 / 文学常识)。</li>
+<li><code>overview-landscape.png</code>:横版 5 屏。</li>
+</ul>
+<h2>6. 配色与字体(沿用 v1)</h2>
+<p>背景暖奶油 <code>#FFF6E0</code>;主色橙 <code>#FF8A3D</code>;绿 <code>#3FBF7F</code>;粉 <code>#FF6B8B</code>;蓝 <code>#4DA3FF</code>;黄 <code>#FFC93C</code>;紫 <code>#8E7CFF</code>。<br />
+<strong>类别色</strong>:古诗词 橙 · 生字词听写 蓝 · 阅读理解 绿 · 成语近义词 紫 · 文学常识 粉(错题本入口同为粉)。<br />
+圆角 16~34px、卡片底部"厚度"阴影;正文 ≥12px;诗句/大字用霞鹜文楷。吉祥物(黄色圆脸+黑方帽)由 CSS 绘制。</p>
+<h2>7. 示例数据声明</h2>
+<p>图中:连续 5 天/最长 12 天、今日 3/15 分钟、各类进度(9/29 首、44/80 词、2/10 篇、21/50 个、18/50 题)、徽章 8/20、错题 12/今日 4/已毕业 7、得分环、日期(10月1日~10月8日)、用时 58 秒等<strong>全部为示意</strong>,不代表真实题库规模或学习记录。听写词语(珍惜、勇敢、灿烂、观察、秘密、温暖)为示例词,<strong>不是教材生字表</strong>。短文《清晨的牵牛花》<strong>为本设计自行原创</strong>,不引用任何教材/课外读物。</p>
+<h2>8. 内容核实情况</h2>
+<p><strong>已核实(联网,与词典/多站点互证)</strong><br />
+- 成语释义:发愤图强 ——"下定决心,努力谋求强盛"(汉典/国语辞典等);意气风发 ——"形容精神振奋,气概豪迈/志气昂扬"(界面写作"精神振奋,气概昂扬");一心一意 ——"心思专一、没有别的念头"(界面写作"心思专一,没有别的想法")。近义成语"奋发图强"为词典所列近义词。<br />
+- 成语接龙链:一心一意 → 意气风发 → 发愤图强 → 强…… 均为首尾字相接(意、发、强 取自成语各自的尾字/首字)。<br />
+- 文学常识(仅用公认无争议项):李白称"诗仙"、杜甫称"诗圣";《论语》记录孔子及其弟子言行;《西游记》作者吴承恩;《朝花夕拾》作者鲁迅、为回忆性散文集。<br />
+- 古诗正文:沿用 v1 已核实的《静夜思》《示儿》;其余诗只显示诗名。诗目见 v1 核实结果。</p>
+<p><strong>未核实 / 需在题库入库前处理</strong><br />
+1. 三年级上册「古诗三首」(第 4 课、第 20 课)篇目:<strong>未核实</strong>,不上架不出题(沿用 v1)。<br />
+2. 四、五年级下册新版教材(2027 春)尚未出版,不收录。<br />
+3. 二年级下册《绝句》与三年级下册《绝句》具体对应篇目需再核(沿用 v1)。<br />
+4. 成语 I1 里的干扰项"发人深省""发扬光大"是成语本身真实存在,但<strong>本稿未逐条核对其释义</strong>(界面未展示其释义);入库时每个成语都必须先核实释义再上架,不确定的一律不用。<br />
+5. 成语"近义词"页签本次只画了入口页签,未出近义词题目界面,所以没有展示近义词对。<br />
+6. 阅读短文与题目为原创示例,正式题库需由家长/老师审阅(如"一般"一词的指代、依据句唯一性)。<br />
+7. 文学常识题库:<strong>五年级应掌握范围未核实</strong>,本稿只取上述确定项;入库时只收有明确出处、无争议的题。<br />
+8. 各类"每日时长/复习间隔(1/3/7 天)/毕业规则(连续 3 次)"为学习科学常用做法的<strong>设计假设</strong>,非教材规定。<br />
+9. Web Speech 中文读音质量与离线可用性依设备而异,需真机实测。<br />
+10. iOS PWA 的存储清理、通知限制以实现时真机表现为准。</p>
+<h2>9. 供用户审看的要点</h2>
+<ol>
+<li><strong>首页</strong>:15 分钟 4 步配比(3/5/5/2)和"今日主练/加餐"轮换是否合适?五类入口顺序?</li>
+<li><strong>听写</strong>:孩子在纸上写 + 自核(自评)是否可接受?是否需要家长代核?自核错字标记是否太繁琐?</li>
+<li><strong>阅读找证据</strong>:"划对依据句才得分"的评分规则(选对 1 分 + 划对依据 1 分 + 不多划 1 分,示意)是否合适?短文长度、是否每次 1~2 题?</li>
+<li><strong>成语</strong>:"接词 + 选意思"两步是否太长?"说出意思由家长点对/不对"是否要保留?</li>
+<li><strong>文学常识</strong>:倒计时是否需要(压力 vs 趣味)?是否只做选择题?</li>
+<li><strong>错题本</strong>:五类混排 + 按复习日期排序是否直观?"连续 3 次答对毕业"规则?</li>
+<li><strong>提醒</strong>:PWA 只能首页提醒条 + 日历文件,是否可接受?</li>
+<li><strong>横屏</strong>:是否需要横版覆盖全部页面(本稿只画 5 屏,其余按同规则推导)?</li>
+<li><strong>添加到主屏幕</strong>:图标暂为占位("学"字橙底),App 名"每日十五分钟"为暂定名。</li>
+<li>开发启动前需用户确认以上要点;<strong>目前未创建或写入任何 GitHub 内容</strong>。</li>
+</ol>
+<h2>10. 目录</h2>
+<pre><code>mockup-full/
+├─ design-notes.md
+├─ overview-portrait.png / overview-landscape.png
+├─ png/portrait/    竖版 24 屏(2x)
+├─ png/landscape/   横版 5 屏(2x)
+├─ html/            各屏 HTML + common.css(+ overview-*.html)
+├─ fonts/           wenkai-subset.ttf(霞鹜文楷子集,OFL)
+└─ src/             生成脚本:lib.py 组件 · s1~s4 古诗词(沿用)· s5 听写/阅读/成语/常识/首页 · s6 错题本/进度/添加到主屏幕 · s7 横版 · subset.py 字体裁剪 · build.py 生成+自检 · check.js 溢出/重叠检测 · overview.py 总览
+   运行:/workspace/venv-pw/bin/python src/build.py &amp;&amp; /workspace/venv-pw/bin/python src/overview.py
+</code></pre>
+    </article>
+  </div>
+</body>
+</html>
