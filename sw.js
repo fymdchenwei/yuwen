@@ -1,4 +1,4 @@
-const CACHE = "yuwen-root-v3";
+const CACHE = "yuwen-root-v4";
 const ASSETS = [
   "./",
   "./index.html",
@@ -14,7 +14,10 @@ const ASSETS = [
   "./data/POEMS_SOURCES.md",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
+  "./icons/icon-maskable-512.png",
   "./icons/apple-touch-icon.png",
+  "./icons/favicon.png",
+  "./favicon.ico",
 ];
 
 function relPath(url) {
