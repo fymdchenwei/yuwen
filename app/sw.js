@@ -1,53 +1,30 @@
-const CACHE = "yuwen-app-v1";
-const ASSETS = [
-  "./",
-  "./index.html",
-  "./manifest.webmanifest",
-  "./css/app.css",
-  "./js/app.js",
-  "./js/store.js",
-  "./js/quiz.js",
-  "./js/render.js",
-  "./js/poems.js",
-  "./js/util.js",
-  "./data/poems.json",
-  "./data/POEMS_SOURCES.md",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/apple-touch-icon.png",
-];
-
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
-  );
+  event.waitUntil(self.skipWaiting());
 });
 
+function rootOf(url) {
+  const path = url.pathname.replace(/\/app(?:\/.*)?$/, "/");
+  return url.origin + (path.endsWith("/") ? path : path + "/") + url.search + url.hash;
+}
+
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))
-    ).then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter((key) => key.indexOf("yuwen-app-v1") === 0).map((key) => caches.delete(key)));
+    const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    await Promise.all(windows.map((client) => {
+      const url = new URL(client.url);
+      const next = rootOf(url);
+      if (next !== client.url) return client.navigate(next);
+      return null;
+    }));
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  if (req.method !== "GET") return;
-  const url = new URL(req.url);
-  if (url.origin !== self.location.origin) return;
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      const fetched = fetch(req)
-        .then((res) => {
-          if (res && res.status === 200 && (res.type === "basic" || res.type === "default")) {
-            const copy = res.clone();
-            caches.open(CACHE).then((cache) => cache.put(req, copy));
-          }
-          return res;
-        })
-        .catch(() => cached);
-      return cached || fetched;
-    })
-  );
+  if (event.request.mode !== "navigate") return;
+  const url = new URL(event.request.url);
+  if (!/\/app(?:\/|$)/.test(url.pathname)) return;
+  event.respondWith(Response.redirect(rootOf(url), 302));
 });

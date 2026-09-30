@@ -95,11 +95,11 @@ export const SOON_MODES = [
 ];
 
 export const CATS = [
-  { id: "poetry", name: "古诗词", color: "#FF8A3D", soft: "#FFF1E4", href: "#/poetry", live: true },
-  { id: "dictation", name: "生字词听写", color: "#4DA3FF", soft: "#DCEEFF", href: "#/soon/dictation", live: false },
-  { id: "reading", name: "阅读理解找证据", color: "#3FBF7F", soft: "#DDF6E8", href: "#/soon/reading", live: false },
-  { id: "idiom", name: "成语与近义词", color: "#8E7CFF", soft: "#E9E5FF", href: "#/soon/idiom", live: false },
-  { id: "literature", name: "文学常识速问", color: "#FF6B8B", soft: "#FFE1E8", href: "#/soon/literature", live: false },
+  { id: "poetry", name: "古诗词", color: "#E23B78", soft: "#FFE4F1", href: "#/poetry", live: true },
+  { id: "dictation", name: "生字词听写", color: "#3B7CFF", soft: "#E5EEFF", href: "#/soon/dictation", live: false },
+  { id: "reading", name: "阅读理解找证据", color: "#1FA97A", soft: "#DDF8EE", href: "#/soon/reading", live: false },
+  { id: "idiom", name: "成语与近义词", color: "#7A5CFF", soft: "#EEE8FF", href: "#/soon/idiom", live: false },
+  { id: "literature", name: "文学常识速问", color: "#F06A3A", soft: "#FFE8DE", href: "#/soon/literature", live: false },
 ];
 
 export const STAGE_LABEL = {

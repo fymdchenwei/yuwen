@@ -28,8 +28,35 @@ import {
   todayMinutes,
 } from "./store.js";
 
-function mascot(talk) {
-  return `<div class="mascot-row">${talk ? `<div class="bubble">${esc(talk)}</div>` : ""}<div class="mascot" aria-hidden="true"><i class="hat"></i><i class="face"><b></b><b></b><s></s></i></div></div>`;
+function buddySvg(mood) {
+  const cheer = mood === "cheer" || mood === "proud";
+  const oops = mood === "oops";
+  const eyes = cheer
+    ? `<path d="M40 62 q8-10 16 0" fill="none" stroke="#3a2348" stroke-width="3.2" stroke-linecap="round"/><path d="M72 62 q8-10 16 0" fill="none" stroke="#3a2348" stroke-width="3.2" stroke-linecap="round"/>`
+    : `<circle cx="48" cy="62" r="4.2" fill="#3a2348"/><circle cx="80" cy="62" r="4.2" fill="#3a2348"/>${oops ? `<path d="M40 52 h12" stroke="#3a2348" stroke-width="2.4" stroke-linecap="round"/><path d="M76 50 h12" stroke="#3a2348" stroke-width="2.4" stroke-linecap="round"/>` : ""}`;
+  const mouth = oops
+    ? `<path d="M54 80 q10-6 20 0" fill="none" stroke="#3a2348" stroke-width="3" stroke-linecap="round"/>`
+    : `<path d="M50 76 q14 16 28 0" fill="none" stroke="#3a2348" stroke-width="3" stroke-linecap="round"/>`;
+  const spark = cheer
+    ? `<path d="M18 28 l3 7 7 2-7 3-3 7-3-7-7-3 7-2z" fill="#ffc53d"/><path d="M104 24 l2.4 5.2 5.4 1.4-5.4 2.2-2.4 5.4-2.2-5.4-5.4-2.2 5.4-1.4z" fill="#7a5cff"/>`
+    : "";
+  return `<svg class="buddy-svg" viewBox="0 0 128 128" aria-hidden="true"><ellipse cx="30" cy="46" rx="14" ry="16" fill="#ff8a3d"/><ellipse cx="98" cy="46" rx="14" ry="16" fill="#ff8a3d"/><ellipse cx="30" cy="48" rx="7" ry="9" fill="#ffe0c2"/><ellipse cx="98" cy="48" rx="7" ry="9" fill="#ffe0c2"/><circle cx="64" cy="72" r="40" fill="#ffc53d"/><ellipse cx="42" cy="82" rx="8" ry="5" fill="#ff7aa2"/><ellipse cx="86" cy="82" rx="8" ry="5" fill="#ff7aa2"/>${eyes}${mouth}<path d="M46 104 h36 a6 6 0 0 1 0 12 h-36 a6 6 0 0 1 0-12z" fill="#e23b78"/>${spark}</svg>`;
+}
+
+function burst() {
+  const colors = ["#e23b78", "#ffc53d", "#3b7cff", "#1fa97a", "#7a5cff", "#ff8a3d", "#ffd1e4", "#fff3b0"];
+  const bits = colors.map((color, i) => {
+    const angle = (i / colors.length) * Math.PI * 2;
+    const dist = 42 + (i % 3) * 16;
+    const x = Math.round(Math.cos(angle) * dist);
+    const y = Math.round(Math.sin(angle) * dist);
+    return `<i style="--x:${x}px;--y:${y}px;background:${color}"></i>`;
+  }).join("");
+  return `<div class="burst" aria-hidden="true">${bits}</div>`;
+}
+
+function mascot(talk, mood = "idle") {
+  return `<div class="mascot-row mood-${mood}">${talk ? `<div class="bubble">${esc(talk)}</div>` : ""}<div class="buddy">${buddySvg(mood)}</div></div>`;
 }
 
 function stars(n) {
@@ -105,11 +132,11 @@ export function renderHome(app) {
       <section>
         <div class="hello">
           <div>
-            <p class="greet">${esc(greeting())}，小朋友</p>
+            <p class="greet">${esc(greeting())}</p>
             <h2>今天也来读一首诗</h2>
             <p class="sub">连续打卡 <b>${streak.current}</b> 天${streak.longest ? ` · 最长 ${streak.longest} 天` : ""}</p>
           </div>
-          ${mascot("今天从这儿开始")}
+          ${mascot("挑一首，我们慢慢背", "idle")}
         </div>
         <div class="week" aria-label="本周打卡">
           ${week.map((d, i) => `<div class="day${d === today ? " today" : ""}${store.checkins.includes(d) ? " on" : ""}"><i>${store.checkins.includes(d) ? "✓" : ""}</i><span>${names[i]}</span></div>`).join("")}
@@ -296,7 +323,10 @@ export function renderQuiz(app) {
     <div class="land-split quiz">
       <section class="card poem-card kai">${body}</section>
       <section class="quiz-side">
-        ${mascot(q.phase === "correct" ? "对啦，记住这一句" : q.phase === "wrong" ? "没关系，看正确的再试一次" : "点字填空，再按检查")}
+        ${mascot(
+          q.phase === "correct" ? "这句你拿下了" : q.phase === "wrong" ? "差一点点，对照正确的再写一次" : (q.mode === "next" ? "看上句，选出下一句" : q.mode === "order" ? "按原来的顺序排好" : "点字填进空里，再检查"),
+          q.phase === "correct" ? "cheer" : q.phase === "wrong" ? "oops" : "idle"
+        )}
         ${q.mode === "fill" ? choicesHtml(q) : ""}
         ${foot}
       </section>
@@ -342,21 +372,21 @@ function feedback(q) {
   if (q.phase === "correct") {
     const label = q.fromReview ? "继续复习" : q.hasNext ? "下一关" : "回到关卡";
     const extra = !q.fromReview && q.mode === "fill" && q.finishedPoem ? "这首诗的逐句填空通关了。" : "";
-    return `<div class="quiz-foot ok"><p>答对了。${extra}</p><button type="button" class="btn block" data-act="next-step">${label}</button></div>`;
+    return `<div class="quiz-foot ok">${burst()}<p>答对了。${extra}</p><button type="button" class="btn block" data-act="next-step">${label}</button></div>`;
   }
   return `<div class="quiz-foot bad"><p>正确是：<b class="kai">${esc(q.answerText)}</b></p><p>这道题已经放进错题本，明天会再出现。连续答对 3 次就毕业。</p><button type="button" class="btn block ghost" data-act="retry">再试一次</button></div>`;
 }
 
 function modalHtml(app) {
   const m = app.modal;
-  return `<div class="mask" role="dialog" aria-modal="true"><div class="card pop"><div class="badge-medal">诗</div><h2>得到徽章</h2><p>${esc(m.title)}</p><button type="button" class="btn" data-act="close-modal">收下</button><a class="text-link" href="#/badges">去徽章墙</a></div></div>`;
+  return `<div class="mask" role="dialog" aria-modal="true"><div class="card pop">${burst()}${mascot("这首诗的徽章给你", "proud")}<div class="badge-medal">诗</div><h2>得到徽章</h2><p>${esc(m.title)}</p><button type="button" class="btn" data-act="close-modal">收下</button><a class="text-link" href="#/badges">去徽章墙</a></div></div>`;
 }
 
 export function renderReviewList(app) {
   const due = dueMistakes(app.store);
   if (!due.length) {
     return `${topbar("今天的重考", "#/home")}
-      <article class="card empty">${mascot("今天没有到期的错题")}<h2>今天没有要复习的题</h2><p>答错的诗句会在明天、3 天后、7 天后回来。连续答对 3 次就毕业。</p><a class="btn" href="#/poetry">去闯关</a></article>`;
+      <article class="card empty">${mascot("今天没有到期的错题", "proud")}<h2>今天没有要复习的题</h2><p>答错的诗句会在明天、3 天后、7 天后回来。连续答对 3 次就毕业。</p><a class="btn" href="#/poetry">去闯关</a></article>`;
   }
   return `${topbar(`今天要复习 · ${due.length}`, "#/home")}
     <div class="list">${due.map((m) => mistakeCard(app, m, true)).join("")}</div>`;
@@ -377,7 +407,7 @@ export function renderMistakes(app) {
   return `${topbar("错题本", "#/home")}
     <div class="filters">${filters.map(([id, name]) => `<button type="button" class="${filter === id ? "on" : ""}" data-act="filter" data-id="${id}">${name}</button>`).join("")}</div>
     ${other ? `<article class="card empty"><h2>即将上线</h2><p>这类练习还没开放，上线后答错的题会出现在这里。</p></article>` : ""}
-    ${!other && !list.length ? `<article class="card empty">${mascot("错题本还是空的")}<h2>还没有错题</h2><p>古诗词答错会自动加进来，按复习日期排。新同学这里是 0。</p></article>` : ""}
+    ${!other && !list.length ? `<article class="card empty">${mascot("错题本还是空的", "idle")}<h2>还没有错题</h2><p>古诗词答错会自动加进来，按复习日期排。新同学这里是 0。</p></article>` : ""}
     ${!other ? groups.filter((g) => g[1].length).map(([name, items]) => `<section><h3 class="sec-title">${name} · ${items.length}</h3><div class="list">${items.map((m) => mistakeCard(app, m)).join("")}</div></section>`).join("") : ""}
     <p class="note">复习间隔：答错后隔天，再对则 3 天后、7 天后。连续 3 次答对就毕业。清除浏览器数据会把错题本一起清掉。</p>`;
 }
@@ -479,7 +509,8 @@ export function renderMe(app) {
       <a class="card row-card" href="#/install"><span><b>添加到主屏幕</b><small>离线练习更稳</small></span></a>
       <a class="card row-card" href="#/backup"><span><b>导出 / 导入备份</b><small>进度只在这台设备上</small></span></a>
     </div>
-    <p class="note">离线缓存：${esc(app.swState)}。清除浏览器数据、或很久不打开，进度和错题本会丢失。换手机前请先导出备份。</p>`;
+    <p class="note">离线缓存：${esc(app.swState)}。清除浏览器数据、或很久不打开，进度和错题本会丢失。换手机前请先导出备份。</p>
+    <p class="foot-quiet"><a href="review/">查看设计稿</a></p>`;
 }
 
 export function renderInstall(app) {

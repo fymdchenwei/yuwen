@@ -2,24 +2,22 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>每日十五分钟 · 语文</title>
-  <meta name="description" content="每天 15 分钟语文练习。古诗词闯关、错题本和徽章都存在这台设备上。">
-  <meta name="theme-color" content="#FF8A3D">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="每日十五分钟">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="css/app.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>正在打开每日15分钟</title>
+  <meta http-equiv="refresh" content="0;url=../">
+  <script>
+    (function () {
+      var path = location.pathname.replace(/\/app(?:\/.*)?$/, "/");
+      if (path.slice(-1) !== "/") path += "/";
+      var next = path + location.search + location.hash;
+      if (location.pathname + location.search + location.hash !== next) location.replace(next);
+    })();
+  </script>
 </head>
 <body>
-  <div id="main" class="main"></div>
-  <nav id="rail" class="rail" aria-label="主导航"></nav>
-  <nav id="tab" class="tabbar" aria-label="主导航"></nav>
-  <div id="toast" class="toast" role="status" hidden></div>
-  <script type="module" src="js/app.js"></script>
+  <p>学习应用已搬到首页。<a href="../">点这里打开</a></p>
+  <script>
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
+  </script>
 </body>
 </html>

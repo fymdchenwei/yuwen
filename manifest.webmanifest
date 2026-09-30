@@ -1,14 +1,14 @@
 {
-  "name": "每日十五分钟",
-  "short_name": "每日十五分钟",
+  "name": "每日15分钟 · 语文学习",
+  "short_name": "每日15分钟",
   "description": "每天 15 分钟语文练习，古诗词闯关、错题本和徽章。",
   "lang": "zh-CN",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#FFF6E0",
-  "theme_color": "#FF8A3D",
+  "background_color": "#FFF0F6",
+  "theme_color": "#E23B78",
   "icons": [
     {
       "src": "icons/icon-192.png",
