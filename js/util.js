@@ -95,16 +95,16 @@ export const SOON_MODES = [
 ];
 
 export const CATS = [
-  { id: "poetry", name: "古诗词", color: "#E23B78", soft: "#FFE4F1", href: "#/poetry", live: true },
-  { id: "dictation", name: "生字词听写", color: "#3B7CFF", soft: "#E5EEFF", href: "#/soon/dictation", live: false },
-  { id: "reading", name: "阅读理解找证据", color: "#1FA97A", soft: "#DDF8EE", href: "#/soon/reading", live: false },
-  { id: "idiom", name: "成语与近义词", color: "#7A5CFF", soft: "#EEE8FF", href: "#/soon/idiom", live: false },
-  { id: "literature", name: "文学常识速问", color: "#F06A3A", soft: "#FFE8DE", href: "#/soon/literature", live: false },
+  { id: "poetry", name: "古诗词", color: "#6D4BD6", soft: "#EDE4FF", href: "#/poetry", live: true },
+  { id: "dictation", name: "生字词听写", color: "#3D9A94", soft: "#E5F6F4", href: "#/soon/dictation", live: false },
+  { id: "reading", name: "阅读理解找证据", color: "#5BA8C9", soft: "#E7F5FB", href: "#/soon/reading", live: false },
+  { id: "idiom", name: "成语与近义词", color: "#D4849A", soft: "#FDECF1", href: "#/soon/idiom", live: false },
+  { id: "literature", name: "文学常识速问", color: "#C4A15A", soft: "#FBF6E8", href: "#/soon/literature", live: false },
 ];
 
 export const STAGE_LABEL = {
-  none: "不会",
-  learning: "在学",
-  known: "会了",
-  mastered: "已掌握",
+  none: "星尘",
+  learning: "星光学徒",
+  known: "月光诗人",
+  mastered: "星河诗仙",
 };

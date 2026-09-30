@@ -32,19 +32,26 @@ function buddySvg(mood) {
   const cheer = mood === "cheer" || mood === "proud";
   const oops = mood === "oops";
   const eyes = cheer
-    ? `<path d="M40 62 q8-10 16 0" fill="none" stroke="#3a2348" stroke-width="3.2" stroke-linecap="round"/><path d="M72 62 q8-10 16 0" fill="none" stroke="#3a2348" stroke-width="3.2" stroke-linecap="round"/>`
-    : `<circle cx="48" cy="62" r="4.2" fill="#3a2348"/><circle cx="80" cy="62" r="4.2" fill="#3a2348"/>${oops ? `<path d="M40 52 h12" stroke="#3a2348" stroke-width="2.4" stroke-linecap="round"/><path d="M76 50 h12" stroke="#3a2348" stroke-width="2.4" stroke-linecap="round"/>` : ""}`;
-  const mouth = oops
-    ? `<path d="M54 80 q10-6 20 0" fill="none" stroke="#3a2348" stroke-width="3" stroke-linecap="round"/>`
-    : `<path d="M50 76 q14 16 28 0" fill="none" stroke="#3a2348" stroke-width="3" stroke-linecap="round"/>`;
-  const spark = cheer
-    ? `<path d="M18 28 l3 7 7 2-7 3-3 7-3-7-7-3 7-2z" fill="#ffc53d"/><path d="M104 24 l2.4 5.2 5.4 1.4-5.4 2.2-2.4 5.4-2.2-5.4-5.4-2.2 5.4-1.4z" fill="#7a5cff"/>`
+    ? `<path d="M50 86 q7-8 14 0" fill="none" stroke="#4a4068" stroke-width="2.2" stroke-linecap="round"/><path d="M78 86 q7-8 14 0" fill="none" stroke="#4a4068" stroke-width="2.2" stroke-linecap="round"/>`
+    : `<ellipse cx="57" cy="86" rx="3.2" ry="3.6" fill="#4a4068"/><ellipse cx="85" cy="86" rx="3.2" ry="3.6" fill="#4a4068"/><circle cx="58.2" cy="85" r="1" fill="#fff"/><circle cx="86.2" cy="85" r="1" fill="#fff"/>`;
+  const brows = oops
+    ? `<path d="M48 76 q8-5 14 1" fill="none" stroke="#4a4068" stroke-width="1.8" stroke-linecap="round"/><path d="M80 77 q8-6 14 0" fill="none" stroke="#4a4068" stroke-width="1.8" stroke-linecap="round"/>`
     : "";
-  return `<svg class="buddy-svg" viewBox="0 0 128 128" aria-hidden="true"><ellipse cx="30" cy="46" rx="14" ry="16" fill="#ff8a3d"/><ellipse cx="98" cy="46" rx="14" ry="16" fill="#ff8a3d"/><ellipse cx="30" cy="48" rx="7" ry="9" fill="#ffe0c2"/><ellipse cx="98" cy="48" rx="7" ry="9" fill="#ffe0c2"/><circle cx="64" cy="72" r="40" fill="#ffc53d"/><ellipse cx="42" cy="82" rx="8" ry="5" fill="#ff7aa2"/><ellipse cx="86" cy="82" rx="8" ry="5" fill="#ff7aa2"/>${eyes}${mouth}<path d="M46 104 h36 a6 6 0 0 1 0 12 h-36 a6 6 0 0 1 0-12z" fill="#e23b78"/>${spark}</svg>`;
+  const mouth = oops
+    ? `<ellipse cx="71" cy="100" rx="4" ry="3" fill="none" stroke="#c47b90" stroke-width="1.8"/>`
+    : `<path d="M62 98 q9 7 18 0" fill="none" stroke="#c47b90" stroke-width="2" stroke-linecap="round"/>`;
+  const spark = cheer
+    ? `<path d="M22 34 l2.2 5 5.2 1.6-5.2 2-2.2 5.2-1.8-5.2-5.2-2 5.2-1.6z" fill="#e8c872"/><path d="M112 30 l1.8 4.2 4.4 1.2-4.4 1.8-1.8 4.4-1.6-4.4-4.4-1.8 4.4-1.2z" fill="#b7a0ef"/>`
+    : `<path d="M108 36 l1.4 3.2 3.4.8-3.4 1.4-1.4 3.4-1.2-3.4-3.4-1.4 3.4-.8z" fill="#e8c872" opacity=".85"/>`;
+  return `<svg class="buddy-svg" viewBox="0 0 142 150" aria-hidden="true"><path d="M28 92 q-16 8-8 28 q10-6 16-2 q2-14-8-26z" fill="#d9cff8" opacity=".85"/><path d="M114 92 q16 8 8 28 q-10-6-16-2 q-2-14 8-26z" fill="#d9cff8" opacity=".85"/><ellipse cx="52" cy="46" rx="11" ry="26" fill="#fffaf6" transform="rotate(-14 52 46)"/><ellipse cx="90" cy="46" rx="11" ry="26" fill="#fffaf6" transform="rotate(14 90 46)"/><ellipse cx="52" cy="48" rx="5.5" ry="16" fill="#f3c5d6" transform="rotate(-14 52 48)"/><ellipse cx="90" cy="48" rx="5.5" ry="16" fill="#f3c5d6" transform="rotate(14 90 48)"/><ellipse cx="71" cy="96" rx="36" ry="32" fill="#fffaf6"/><path d="M64 62 a9 9 0 1 0 10 12 a6.2 6.2 0 1 1-10-12z" fill="#e4c56a"/><ellipse cx="48" cy="100" rx="7" ry="3.6" fill="#f0b7c8" opacity=".75"/><ellipse cx="94" cy="100" rx="7" ry="3.6" fill="#f0b7c8" opacity=".75"/>${brows}${eyes}${mouth}<path d="M56 122 q15 12 30 0 q-6 8-15 6 q-9 2-15-6z" fill="#7d62c9"/>${spark}</svg>`;
+}
+
+function gem() {
+  return `<svg class="gem" viewBox="0 0 64 72" aria-hidden="true"><polygon points="32,4 56,22 48,66 16,66 8,22" fill="currentColor"/><polygon points="32,4 44,22 32,36 20,22" fill="rgba(255,255,255,.62)"/><polygon points="20,22 32,36 32,66 16,66" fill="rgba(255,255,255,.22)"/><circle cx="32" cy="28" r="2.2" fill="#fff"/></svg>`;
 }
 
 function burst() {
-  const colors = ["#e23b78", "#ffc53d", "#3b7cff", "#1fa97a", "#7a5cff", "#ff8a3d", "#ffd1e4", "#fff3b0"];
+  const colors = ["#b7a0ef", "#e8c872", "#f0b7c8", "#7ec8c3", "#fff6d8", "#d4c4f5", "#f7d7a8", "#c5e8ea"];
   const bits = colors.map((color, i) => {
     const angle = (i / colors.length) * Math.PI * 2;
     const dist = 42 + (i % 3) * 16;
@@ -109,7 +116,7 @@ export function renderHome(app) {
       name: "错题重考",
       time: "3 分钟",
       state: !plan.reviewNeeded ? "skip" : reviewOk ? "done" : "now",
-      text: !plan.reviewNeeded ? "今天没有到期的错题" : reviewOk ? "今天的重考做完了" : `有 ${due.length} 道今天要复习`,
+      text: !plan.reviewNeeded ? "今天没有" : reviewOk ? "做完了" : `${due.length} 道要复习`,
       href: "#/review",
     },
     {
@@ -117,17 +124,14 @@ export function renderHome(app) {
       name: "古诗词",
       time: "5 分钟",
       state: poetOk ? "done" : reviewOk ? "now" : "todo",
-      text: poetOk ? `今天已闯 ${clears} 关` : `接着闯，满 3 关算完成（已 ${clears} 关）`,
+      text: poetOk ? `已闯 ${clears} 关` : `${clears} / 3 关`,
       href: "#/poetry",
     },
     { n: "3", name: "阅读理解", time: "5 分钟", state: "soon", text: "即将上线", href: "#/soon/reading" },
     { n: "4", name: "快问快答", time: "2 分钟", state: "soon", text: "即将上线", href: "#/soon/literature" },
   ];
 
-  const install = installBanner(app);
-
   return `
-    ${install}
     <div class="land-split">
       <section>
         <div class="hello">
@@ -136,10 +140,10 @@ export function renderHome(app) {
             <h2>今天也来读一首诗</h2>
             <p class="sub">连续打卡 <b>${streak.current}</b> 天${streak.longest ? ` · 最长 ${streak.longest} 天` : ""}</p>
           </div>
-          ${mascot("挑一首，我们慢慢背", "idle")}
+          ${mascot("读一首吧", "idle")}
         </div>
         <div class="week" aria-label="本周打卡">
-          ${week.map((d, i) => `<div class="day${d === today ? " today" : ""}${store.checkins.includes(d) ? " on" : ""}"><i>${store.checkins.includes(d) ? "✓" : ""}</i><span>${names[i]}</span></div>`).join("")}
+          ${week.map((d, i) => `<div class="day${d === today ? " today" : ""}${store.checkins.includes(d) ? " on" : ""}"><i>${store.checkins.includes(d) ? "✦" : ""}</i><span>${names[i]}</span></div>`).join("")}
         </div>
         <article class="card plan">
           <header><h3>今日 15 分钟</h3><span class="pill">${minutes} / 15 分钟</span></header>
@@ -162,15 +166,6 @@ export function renderHome(app) {
     </div>`;
 }
 
-function installBanner(app) {
-  if (app.store.installDismissed || app.standalone) return "";
-  const ios = app.ios;
-  const text = ios
-    ? "用 Safari 时，点底部分享按钮，再点「添加到主屏幕」。加上之后，练习记录会更稳。"
-    : "可以在浏览器菜单里选择「安装应用」或「添加到主屏幕」，离线也能接着练。";
-  return `<aside class="install-banner card"><p><b>添加到主屏幕</b>${esc(text)}</p><span><a href="#/install">看图解</a><button type="button" data-act="dismiss-install">知道了</button></span></aside>`;
-}
-
 export function renderPoetry(app) {
   const { store } = app;
   const poems = allPoems();
@@ -185,18 +180,17 @@ export function renderPoetry(app) {
     ...SOON_MODES.map((m) => ({ ...m, href: `#/soon/mode-${m.id}`, stat: "即将上线", soon: true })),
   ];
   return `${topbar("古诗词", "#/home")}
-    <p class="lead">先选一种练法，再选年级和诗。只收录已经核对过正文的诗。</p>
+    <p class="lead">选一种练法。</p>
     <div class="list">
       ${cards.map((c) => `<a class="card row-card" href="${c.href}"><span><b>${esc(c.name)}</b><small>${esc(c.blurb)}</small></span><em class="${c.soon ? "soon-tag" : "count-tag"}">${esc(c.stat)}</em></a>`).join("")}
     </div>`;
 }
 
-export function renderSoon(title, text) {
+export function renderSoon(title) {
   return `${topbar(title || "即将上线", "#/home")}
     <article class="card empty">
-      ${mascot("这一块还在准备")}
+      ${mascot("还在准备", "idle")}
       <h2>即将上线</h2>
-      <p>${esc(text || "这一类练习还没开放。现在可以先练古诗词，答错的句子会自动进错题本。")}</p>
       <a class="btn" href="#/poetry">去练古诗词</a>
     </article>`;
 }
@@ -205,7 +199,7 @@ export function renderGrades(app, mode) {
   const info = MODES[mode];
   if (!info) return renderSoon("即将上线");
   return `${topbar(info.name, "#/poetry")}
-    <p class="lead">${esc(info.blurb)}。点年级看这一册的诗。</p>
+    <p class="lead">${esc(info.blurb)}</p>
     <div class="grade-grid">
       ${[1, 2, 3, 4, 5].map((g) => {
         const books = gradeBooks(g);
@@ -288,7 +282,7 @@ export function renderPath(app, mode, poemId) {
       <aside class="card side-card">
         <p>${stageChip(stage)} ${ring(masteryPercent(app.store, poem), poem.title)}</p>
         <h3>${esc(info.name)}</h3>
-        <p class="sub">整首逐句填空都过关，会得到这首诗的徽章。</p>
+        <p class="sub">逐句过关，收下这首诗的徽章。</p>
         <a class="btn block" href="${startHref}">${fillClearedCount(app.store, poem) ? "继续闯关" : "开始"}</a>
       </aside>
     </div>`;
@@ -324,7 +318,7 @@ export function renderQuiz(app) {
       <section class="card poem-card kai">${body}</section>
       <section class="quiz-side">
         ${mascot(
-          q.phase === "correct" ? "这句你拿下了" : q.phase === "wrong" ? "差一点点，对照正确的再写一次" : (q.mode === "next" ? "看上句，选出下一句" : q.mode === "order" ? "按原来的顺序排好" : "点字填进空里，再检查"),
+          q.phase === "correct" ? "这句是你的了" : q.phase === "wrong" ? "再看一眼" : (q.mode === "next" ? "接上下一句" : q.mode === "order" ? "排回原来的样子" : "填上这句"),
           q.phase === "correct" ? "cheer" : q.phase === "wrong" ? "oops" : "idle"
         )}
         ${q.mode === "fill" ? choicesHtml(q) : ""}
@@ -362,7 +356,7 @@ function nextBody(q, poem) {
 function orderBody(q) {
   const slots = q.placed.map((item, i) => `<button type="button" class="slot" data-act="unplace" data-i="${i}" ${q.phase === "answer" ? "" : "disabled"}>${esc(item.text)}</button>`).join("");
   const rest = q.chips.map((item, i) => `<button type="button" class="chip-line" data-act="place" data-i="${i}" ${q.phase === "answer" ? "" : "disabled"}>${esc(item.text)}</button>`).join("");
-  return `<p class="eyebrow">按原来的顺序排好</p><div class="slots">${slots || `<span class="hint">点下面的诗句，排到这里</span>`}</div><div class="chips">${rest}</div>`;
+  return `<p class="eyebrow">按原来的顺序排好</p><div class="slots">${slots || `<span class="hint">排到这里</span>`}</div><div class="chips">${rest}</div>`;
 }
 
 function feedback(q) {
@@ -374,19 +368,19 @@ function feedback(q) {
     const extra = !q.fromReview && q.mode === "fill" && q.finishedPoem ? "这首诗的逐句填空通关了。" : "";
     return `<div class="quiz-foot ok">${burst()}<p>答对了。${extra}</p><button type="button" class="btn block" data-act="next-step">${label}</button></div>`;
   }
-  return `<div class="quiz-foot bad"><p>正确是：<b class="kai">${esc(q.answerText)}</b></p><p>这道题已经放进错题本，明天会再出现。连续答对 3 次就毕业。</p><button type="button" class="btn block ghost" data-act="retry">再试一次</button></div>`;
+  return `<div class="quiz-foot bad"><p>正确是：<b class="kai">${esc(q.answerText)}</b></p><p>已经放进错题本。</p><button type="button" class="btn block ghost" data-act="retry">再试一次</button></div>`;
 }
 
 function modalHtml(app) {
   const m = app.modal;
-  return `<div class="mask" role="dialog" aria-modal="true"><div class="card pop">${burst()}${mascot("这首诗的徽章给你", "proud")}<div class="badge-medal">诗</div><h2>得到徽章</h2><p>${esc(m.title)}</p><button type="button" class="btn" data-act="close-modal">收下</button><a class="text-link" href="#/badges">去徽章墙</a></div></div>`;
+  return `<div class="mask" role="dialog" aria-modal="true"><div class="card pop">${burst()}${mascot("这块水晶给你", "proud")}<div class="badge-medal">${gem()}</div><h2>得到徽章</h2><p>${esc(m.title)}</p><button type="button" class="btn" data-act="close-modal">收下</button><a class="text-link" href="#/badges">去徽章墙</a></div></div>`;
 }
 
 export function renderReviewList(app) {
   const due = dueMistakes(app.store);
   if (!due.length) {
     return `${topbar("今天的重考", "#/home")}
-      <article class="card empty">${mascot("今天没有到期的错题", "proud")}<h2>今天没有要复习的题</h2><p>答错的诗句会在明天、3 天后、7 天后回来。连续答对 3 次就毕业。</p><a class="btn" href="#/poetry">去闯关</a></article>`;
+      <article class="card empty">${mascot("今天清清爽爽", "proud")}<h2>今天没有要复习的题</h2><a class="btn" href="#/poetry">去闯关</a></article>`;
   }
   return `${topbar(`今天要复习 · ${due.length}`, "#/home")}
     <div class="list">${due.map((m) => mistakeCard(app, m, true)).join("")}</div>`;
@@ -406,10 +400,9 @@ export function renderMistakes(app) {
   const other = filter !== "all" && filter !== "poetry";
   return `${topbar("错题本", "#/home")}
     <div class="filters">${filters.map(([id, name]) => `<button type="button" class="${filter === id ? "on" : ""}" data-act="filter" data-id="${id}">${name}</button>`).join("")}</div>
-    ${other ? `<article class="card empty"><h2>即将上线</h2><p>这类练习还没开放，上线后答错的题会出现在这里。</p></article>` : ""}
-    ${!other && !list.length ? `<article class="card empty">${mascot("错题本还是空的", "idle")}<h2>还没有错题</h2><p>古诗词答错会自动加进来，按复习日期排。新同学这里是 0。</p></article>` : ""}
-    ${!other ? groups.filter((g) => g[1].length).map(([name, items]) => `<section><h3 class="sec-title">${name} · ${items.length}</h3><div class="list">${items.map((m) => mistakeCard(app, m)).join("")}</div></section>`).join("") : ""}
-    <p class="note">复习间隔：答错后隔天，再对则 3 天后、7 天后。连续 3 次答对就毕业。清除浏览器数据会把错题本一起清掉。</p>`;
+    ${other ? `<article class="card empty"><h2>即将上线</h2></article>` : ""}
+    ${!other && !list.length ? `<article class="card empty">${mascot("还是空的", "idle")}<h2>还没有错题</h2></article>` : ""}
+    ${!other ? groups.filter((g) => g[1].length).map(([name, items]) => `<section><h3 class="sec-title">${name} · ${items.length}</h3><div class="list">${items.map((m) => mistakeCard(app, m)).join("")}</div></section>`).join("") : ""}`;
 }
 
 function mistakeCard(app, m, review) {
@@ -433,11 +426,11 @@ export function renderBadges(app) {
   const defs = BADGE_DEFS.concat(poemBadges);
   const got = defs.filter((d) => store.badges.includes(d.id)).length;
   return `${topbar("徽章墙", "#/me")}
-    <p class="lead">已获得 ${got} / ${defs.length}。没得到的是后面可以拿的目标，不是已经完成的记录。</p>
+    <p class="lead">已获得 ${got} / ${defs.length}</p>
     <div class="badge-grid">
       ${defs.map((d) => {
         const on = store.badges.includes(d.id);
-        return `<div class="card badge${on ? " on" : ""}"><div class="badge-medal">${on ? "诗" : ""}</div><b>${esc(d.name)}</b><small>${on ? "已获得" : esc(d.hint)}</small></div>`;
+        return `<div class="card badge${on ? " on" : ""}"><div class="badge-medal">${gem()}</div><b>${esc(d.name)}</b><small>${on ? "已获得" : esc(d.hint)}</small></div>`;
       }).join("")}
     </div>`;
 }
@@ -457,21 +450,21 @@ export function renderProgress(app) {
     <div class="land-split">
       <section class="card pad">
         <h3>连续打卡 ${streak.current} 天</h3>
-        <p class="sub">最长 ${streak.longest} 天。完成当天可用的计划（错题重考若有，加上古诗词 3 关）算打卡。</p>
+        <p class="sub">最长 ${streak.longest} 天</p>
         <div class="week" aria-label="本周打卡">
-          ${weekDates().map((d, i) => `<div class="day${d === todayStr() ? " today" : ""}${store.checkins.includes(d) ? " on" : ""}"><i>${store.checkins.includes(d) ? "✓" : ""}</i><span>${"一二三四五六日"[i]}</span></div>`).join("")}
+          ${weekDates().map((d, i) => `<div class="day${d === todayStr() ? " today" : ""}${store.checkins.includes(d) ? " on" : ""}"><i>${store.checkins.includes(d) ? "✦" : ""}</i><span>${"一二三四五六日"[i]}</span></div>`).join("")}
         </div>
         <p class="sub">错题本：还在复习 ${active} · 已毕业 ${graduated}</p>
         <a class="text-link" href="#/mistakes">打开错题本</a>
       </section>
       <section>
         <article class="card pad">
-          <h3>掌握阶段</h3>
+          <h3>星阶</h3>
           <ul class="stage-list">
-            <li><span class="chip stage-none">不会</span><b>${stages.none}</b></li>
-            <li><span class="chip stage-learning">在学</span><b>${stages.learning}</b></li>
-            <li><span class="chip stage-known">会了</span><b>${stages.known}</b></li>
-            <li><span class="chip stage-mastered">已掌握</span><b>${stages.mastered}</b></li>
+            <li><span class="chip stage-none">${STAGE_LABEL.none}</span><b>${stages.none}</b></li>
+            <li><span class="chip stage-learning">${STAGE_LABEL.learning}</span><b>${stages.learning}</b></li>
+            <li><span class="chip stage-known">${STAGE_LABEL.known}</span><b>${stages.known}</b></li>
+            <li><span class="chip stage-mastered">${STAGE_LABEL.mastered}</span><b>${stages.mastered}</b></li>
           </ul>
           ${[1, 2, 3, 4, 5].map((g) => {
             const list = poems.filter((p) => p.grade === g);
@@ -504,37 +497,18 @@ export function renderMe(app) {
       <div class="card stat"><b>${got}</b><small>徽章</small></div>
     </div>
     <div class="list">
-      <a class="card row-card" href="#/progress"><span><b>进度</b><small>不会、在学、会了、已掌握</small></span></a>
+      <a class="card row-card" href="#/progress"><span><b>进度</b><small>星尘到星河诗仙</small></span></a>
       <a class="card row-card" href="#/badges"><span><b>徽章墙</b><small>已获得 ${got} 枚</small></span></a>
-      <a class="card row-card" href="#/install"><span><b>添加到主屏幕</b><small>离线练习更稳</small></span></a>
-      <a class="card row-card" href="#/backup"><span><b>导出 / 导入备份</b><small>进度只在这台设备上</small></span></a>
     </div>
-    <p class="note">离线缓存：${esc(app.swState)}。清除浏览器数据、或很久不打开，进度和错题本会丢失。换手机前请先导出备份。</p>
-    <p class="foot-quiet"><a href="review/">查看设计稿</a></p>`;
-}
-
-export function renderInstall(app) {
-  return `${topbar("添加到主屏幕", "#/me")}
-    <article class="card pad">
-      <h3>iPhone / iPad（Safari）</h3>
-      <ol class="guide"><li>用 Safari 打开这个页面</li><li>点底部分享按钮</li><li>点「添加到主屏幕」</li></ol>
-      <h3>安卓（Chrome）</h3>
-      <ol class="guide"><li>打开浏览器菜单</li><li>点「安装应用」或「添加到主屏幕」</li></ol>
-      <p class="sub">当前：${app.standalone ? "已经从主屏幕打开" : app.ios ? "看起来是 iPhone / iPad 浏览器" : "可以用菜单安装"}。离线缓存 ${esc(app.swState)}。</p>
-      <p class="note">进度存在这台设备里。添加到主屏幕后一般更不容易被清掉，但系统仍可能清理长期不用的网站数据。请在「我的」里导出 JSON 备份。</p>
-    </article>`;
+    <p class="foot-quiet"><a href="#/backup">备份</a></p>`;
 }
 
 export function renderBackup() {
   return `${topbar("备份", "#/me")}
-    <article class="card pad">
-      <h3>导出 / 导入</h3>
-      <p>备份是一个 JSON 文件，里面是打卡、闯关、错题和徽章。可以换浏览器后再导入。</p>
+    <article class="card pad backup-card">
       <button type="button" class="btn" data-act="export">导出备份</button>
       <button type="button" class="btn ghost" data-act="pick-import">导入备份</button>
       <input id="import-file" type="file" accept="application/json,.json" hidden>
-      <p class="note">清除浏览器数据会丢失进度。导入会用文件里的记录替换这台设备上现在的进度。</p>
-      <p class="sub"><a href="data/POEMS_SOURCES.md">诗句来源与异文说明</a></p>
     </article>`;
 }
 
@@ -568,7 +542,7 @@ export function renderRoute(app, route) {
     case "poetry":
       return renderPoetry(app);
     case "soon":
-      return renderSoon("即将上线", soonText(a));
+      return renderSoon("即将上线");
     case "grades":
       return renderGrades(app, a);
     case "grade":
@@ -588,21 +562,10 @@ export function renderRoute(app, route) {
     case "me":
       return renderMe(app);
     case "install":
-      return renderInstall(app);
+      return renderMe(app);
     case "backup":
       return renderBackup();
     default:
       return renderHome(app);
   }
-}
-
-function soonText(id) {
-  const map = {
-    dictation: "生字词听写还在准备。以后会用系统语音读词，在纸上写，再自己核对。",
-    reading: "阅读理解找证据还在准备。正式短文要先核对，再出题。",
-    idiom: "成语和近义词还在准备。每个成语会先核对释义再上架。",
-    literature: "文学常识速问还在准备。只收录没有争议的题目。",
-  };
-  if (id && id.startsWith("mode-")) return "这种古诗词练法还在准备，先用逐句填空、接下句和排序。";
-  return map[id] || "这一页还在准备。";
 }

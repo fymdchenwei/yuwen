@@ -1,4 +1,4 @@
-const CACHE = "yuwen-root-v2";
+const CACHE = "yuwen-root-v3";
 const ASSETS = [
   "./",
   "./index.html",

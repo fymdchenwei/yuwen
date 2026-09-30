@@ -22,9 +22,6 @@ const app = {
   store: emptyStore(),
   quiz: null,
   modal: null,
-  swState: "正在注册",
-  ios: false,
-  standalone: false,
 };
 
 const main = document.querySelector("#main");
@@ -367,12 +364,6 @@ function onAct(act, dataset) {
     render();
     return;
   }
-  if (act === "dismiss-install") {
-    app.store.installDismissed = true;
-    persist();
-    render();
-    return;
-  }
   if (act === "filter") {
     app.store.mistakeFilter = dataset.id;
     persist();
@@ -405,26 +396,11 @@ const orient = matchMedia("(orientation: landscape)");
 orient.addEventListener("change", render);
 
 function registerSw() {
-  if (!("serviceWorker" in navigator)) {
-    app.swState = "浏览器不支持";
-    return;
-  }
-  navigator.serviceWorker
-    .register("./sw.js")
-    .then((reg) => {
-      app.swState = reg.active || reg.installing || reg.waiting ? "已注册" : "已注册";
-      render();
-    })
-    .catch(() => {
-      app.swState = "注册失败";
-      render();
-    });
+  if (!("serviceWorker" in navigator)) return;
+  navigator.serviceWorker.register("./sw.js").catch(() => {});
 }
 
 async function boot() {
-  const ua = navigator.userAgent || "";
-  app.ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  app.standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
   try {
     await loadPoems();
   } catch (err) {
