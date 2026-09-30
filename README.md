@@ -1,8 +1,11 @@
 # 每日 15 分钟 · 语文学习
 
-这是语文学习 App（Web / PWA）的**效果图评审版**，用来看界面和流程。**开发尚未开始。**
+这是语文学习 Web / PWA。效果图评审页在仓库根目录，第一版应用在 `app/`。
 
-在线评审页：<https://fymdchenwei.github.io/yuwen/>
+- 评审页：<https://fymdchenwei.github.io/yuwen/>
+- v1 应用：<https://fymdchenwei.github.io/yuwen/app/>
+
+效果图里的连续天数、进度、得分仍是示例。应用里的数字只来自这台设备上的真实练习，新用户从 0 开始。
 
 图里的连续天数、进度、得分、日期等都是**示例数据**，只用于设计示意。
 
